@@ -1,5 +1,9 @@
 # Twitter保存ランキング 便利スクリプト
 
+## ダウンロード
+
+<a href="https://raw.githubusercontent.com/HidegonSan/TwitterRankingUserScript/main/twitter_ranking_direct_play.user.js" target="_blank">twitter_ranking_direct_play.user.js</a>  
+
 ## 対応サイト
 
 [https://www.twidouga.net/](https://www.twidouga.net/ranking_t.php)  
