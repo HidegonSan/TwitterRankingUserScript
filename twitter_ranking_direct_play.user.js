@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Twitter保存ランキング 直接再生
-// @version      0.0.7
+// @version      0.0.8
 // @description  各種Twitter保存ランキングで動画を直接再生できるようにします (twihub.me, twidouga.net, twivideo.net, twiigle.com, twicoco.com, twidou.link)
 // @match        *://twihub.me/v2/detail.php*
 // @match        *://www.twidouga.net/*
@@ -33,7 +33,8 @@ if (location.origin == "https://twihub.me") {
   var card = document.getElementsByClassName("c_detail-card")[0]
   var video_url = document.querySelectorAll("a[href^='https://video.twimg.com/']")[0].href
   var video_extension = get_extension(video_url)
-  var element = `<video controls=""><source src="${video_url}" type="video/${video_extension}"></video>`
+  var thumbnail_url = card.childNodes[0].childNodes[0].src
+  var element = `<video controls="controls" preload="none" poster="${thumbnail_url}"><source src="${video_url}" type="video/${video_extension}"></video>`
   card.childNodes.forEach(e => { e.remove() })
   card.insertAdjacentHTML("afterbegin", element)
   card.style.cssText += "margin: auto!important;"
@@ -46,7 +47,8 @@ else if (location.origin == "https://www.twidouga.net") {
   document.querySelectorAll(".gazou > .poster > a[href^='https://video.twimg.com/']").forEach(function(e) {
     var video_url = e.href
     var video_extension = get_extension(video_url)
-    var element = `<video controls="" style="width: 300px; border-radius: 15px;"><source src="${video_url}" type="video/${video_extension}"></video><br>`
+    var thumbnail_url = e.childNodes[0].src
+    var element = `<video controls="controls" style="width: 300px; border-radius: 15px;" preload="none" poster="${thumbnail_url}"><source src="${video_url}" type="video/${video_extension}"></video><br>`
     e.parentNode.parentNode.insertAdjacentHTML("afterend", element)
     e.parentNode.parentNode.remove()
   })
@@ -73,7 +75,8 @@ else if (location.origin == "https://twivideo.net") {
         var video = videos[i]
         var video_url = video.childNodes[1].href
         var video_extension = get_extension(video_url)
-        var element = `<video controls="" style="width: 100%; height: auto; object-fit: contain; border-radius: 3px;" preload="metadata"><source src="${video_url}#t=0.1" type="video/${video_extension}"></video><br>`
+        var thumbnail_url = video.childNodes[1].childNodes[1].src
+        var element = `<video controls="controls" style="width: 100%; height: auto; object-fit: contain; border-radius: 3px;" preload="none" poster="${thumbnail_url}"><source src="${video_url}" type="video/${video_extension}"></video><br>`
         video.insertAdjacentHTML("afterbegin", element)
         video.childNodes[3].remove()
       }
@@ -112,7 +115,8 @@ else if (location.origin == "https://twiigle.com") {
   document.querySelectorAll(".item_image").forEach(function(video) {
     var video_url = video.childNodes[1].href
     var video_extension = get_extension(video_url)
-    var element = `<video controls="" style="width: 100%; height: auto; object-fit: contain; border-radius: 3px;" preload="metadata"><source src="${video_url}#t=0.1" type="video/${video_extension}"></video><br>`
+    var thumbnail_url = video.childNodes[1].childNodes[1].src
+    var element = `<video controls="controls" style="width: 100%; height: auto; object-fit: contain; border-radius: 3px;" preload="none" poster="${thumbnail_url}"><source src="${video_url}" type="video/${video_extension}"></video><br>`
     video.insertAdjacentHTML("afterbegin", element)
     video.childNodes[3].remove()
   })
@@ -139,7 +143,8 @@ else if (location.origin == "https://twicoco.com" || location.origin == "https:/
   document.querySelectorAll(".video-card").forEach(function(card) {
     var video_url = card.parentNode.href
     var video_extension = get_extension(video_url)
-    var element = `<video controls="" style="width: 100%;" preload="metadata"><source src="${video_url}#t=0.1" type="video/${video_extension}"></video><br>`
+    var thumbnail_url = card.childNodes[0].childNodes[0].src
+    var element = `<video controls="controls" style="width: 100%;" preload="none" poster="${thumbnail_url}"><source src="${video_url}" type="video/${video_extension}"></video><br>`
     card.parentNode.insertAdjacentHTML("afterend", element)
     card.remove()
   })
