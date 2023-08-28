@@ -12,7 +12,7 @@
 [https://twiigle.com/](https://twiigle.com/)  
 [https://twicoco.com/](https://twicoco.com/)  
 [https://www.twidou.link/](https://www.twidou.link/)  
-
+[https://erozine.jp/twitter](https://erozine.jp/twitter)
 ## 機能
 
 対応サイトにて、動画の直接再生を可能にします。
