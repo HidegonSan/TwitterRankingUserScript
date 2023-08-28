@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Twitter保存ランキング 直接再生
-// @version      0.1.0
+// @version      0.1.2
 // @description  各種Twitter保存ランキングで動画を直接再生できるようにします (twihub.me, twidouga.net, twivideo.net, twiigle.com, twicoco.com, twidou.link, erozine.jp)
 // @match        *://twihub.me/*
 // @match        *://www.twidouga.net/*
@@ -48,21 +48,38 @@ if (location.origin == "https://twihub.me") {
     card.childNodes.forEach(e => { e.remove() })
     card.insertAdjacentHTML("afterbegin", element)
     card.style.cssText += "margin: auto!important;"
-    card.childNodes[0].style.cssText += "max-height: 80vh;"
+    card.parentNode.style.cssText += "text-align: center;"
+    card.childNodes[0].childNodes[0].style.cssText += "max-height: 80vh;"
   }
 } // End of twihub.me
 
 
 // twidouga.net
 else if (location.origin == "https://www.twidouga.net") {
-  document.querySelectorAll(".gazou > .poster > a[href^='https://video.twimg.com/']").forEach(function(e) {
-    var video_url = e.href
-    var video_extension = get_extension(video_url)
-    var thumbnail_url = e.childNodes[0].src
-    var element = `<a href="${video_url}" target="_blank"><video controls="controls" style="width: 300px; border-radius: 15px;" preload="none" poster="${thumbnail_url}"><source src="${video_url}" type="video/${video_extension}"></video></a><br>`
-    e.parentNode.parentNode.insertAdjacentHTML("afterend", element)
-    e.parentNode.parentNode.remove()
-  })
+  if (location.href.startsWith("https://www.twidouga.net/realtime_t.php")) {
+    setInterval(function() {
+      document.querySelectorAll("a[href^='https://video.twimg.com/']").forEach(function(e) {
+        if (e.parentNode.id == "pakuri" || e.parentNode.childNodes[0].childNodes[0].tagName == "VIDEO") { return; }
+        var video_url = e.href
+        var video_extension = get_extension(video_url)
+        var thumbnail_url = e.childNodes[0].src
+        var element = `<a href="${video_url}" target="_blank"><video controls="controls" style="width: 180px; border-radius: 15px;" preload="none" poster="${thumbnail_url}"><source src="${video_url}" type="video/${video_extension}"></video></a><br>`
+        e.parentNode.insertAdjacentHTML("afterbegin", element)
+        e.style.display = "none"
+      }),
+      500
+    })
+  }
+  else {
+    document.querySelectorAll(".gazou > .poster > a[href^='https://video.twimg.com/']").forEach(function(e) {
+      var video_url = e.href
+      var video_extension = get_extension(video_url)
+      var thumbnail_url = e.childNodes[0].src
+      var element = `<a href="${video_url}" target="_blank"><video controls="controls" style="width: 300px; border-radius: 15px;" preload="none" poster="${thumbnail_url}"><source src="${video_url}" type="video/${video_extension}"></video></a><br>`
+      e.parentNode.parentNode.insertAdjacentHTML("afterend", element)
+      e.parentNode.parentNode.remove()
+    })
+  }
 } // End of twidouga.net
 
 
@@ -73,9 +90,9 @@ else if (location.origin == "https://twivideo.net") {
   if (!document.getElementById("read_page")) {
     document.getElementsByClassName("grids")[0].insertAdjacentHTML("afterend", '<div id="read_page" style="display: block;">もっと見る</div>')
     document.getElementById("read_page").addEventListener("click", function() {
-	    var offset = document.querySelectorAll(".grids .art_li").length
-	    var limit = 45
-	    view_lists(offset, limit);
+      var offset = document.querySelectorAll(".grids .art_li").length
+      var limit = 45
+      view_lists(offset, limit);
     });
   }
 
@@ -95,7 +112,7 @@ else if (location.origin == "https://twivideo.net") {
   }
 
   function patched_show_more() {
-	  var video_counts = document.getElementsByClassName("art_li").length
+    var video_counts = document.getElementsByClassName("art_li").length
     replace_to_video(45*show_more_called, 45*(show_more_called + 1) - 1)
     if ($) {
       setInterval(
@@ -106,11 +123,11 @@ else if (location.origin == "https://twivideo.net") {
         500
       )
     }
-	  if (video_counts < 1000 || video_counts < 0) {
+    if (video_counts < 1000 || video_counts < 0) {
       document.getElementById("read_page").style.display = "block"
       show_more_called += 1;
     }
-	  else {
+    else {
       document.getElementById("read_page").style.display = "none"
       return false
     }
@@ -151,14 +168,26 @@ else if (location.origin == "https://twiigle.com") {
 
 // twicoco.com, www.twidou.link
 else if (location.origin == "https://twicoco.com" || location.origin == "https://www.twidou.link") {
-  document.querySelectorAll(".video-card").forEach(function(card) {
-    var video_url = card.parentNode.href
-    var video_extension = get_extension(video_url)
-    var thumbnail_url = card.childNodes[0].childNodes[0].src
-    var element = `<a href="${video_url}" target="_blank"><video controls="controls" style="width: 100%;" preload="none" poster="${thumbnail_url}"><source src="${video_url}" type="video/${video_extension}"></video></a><br>`
-    card.parentNode.insertAdjacentHTML("afterend", element)
-    card.remove()
-  })
+  if (location.href.indexOf("favs.php") != -1) {
+    document.querySelectorAll(".c-fav-card").forEach(function(card) {
+      var video_url = card.childNodes[4].href
+      var video_extension = get_extension(video_url)
+      var thumbnail_url = card.childNodes[4].childNodes[0].src
+      var element = `<a href="${video_url}" target="_blank"><video controls="controls" style="width: 100%;" preload="none" poster="${thumbnail_url}"><source src="${video_url}" type="video/${video_extension}"></video></a><br>`
+      card.childNodes[4].insertAdjacentHTML("afterend", element)
+      card.childNodes[4].remove()
+    })
+  }
+  else {
+    document.querySelectorAll(".video-card").forEach(function(card) {
+      var video_url = card.parentNode.href
+      var video_extension = get_extension(video_url)
+      var thumbnail_url = card.childNodes[0].childNodes[0].src
+      var element = `<a href="${video_url}" target="_blank"><video controls="controls" style="width: 100%;" preload="none" poster="${thumbnail_url}"><source src="${video_url}" type="video/${video_extension}"></video></a><br>`
+      card.parentNode.insertAdjacentHTML("afterend", element)
+      card.remove()
+    })
+  }
 } // End of twicoco.com, www.twidou.link
 
 
