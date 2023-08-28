@@ -1,13 +1,14 @@
 // ==UserScript==
 // @name         Twitter保存ランキング 直接再生
-// @version      0.0.8
-// @description  各種Twitter保存ランキングで動画を直接再生できるようにします (twihub.me, twidouga.net, twivideo.net, twiigle.com, twicoco.com, twidou.link)
-// @match        *://twihub.me/v2/detail.php*
+// @version      0.1.0
+// @description  各種Twitter保存ランキングで動画を直接再生できるようにします (twihub.me, twidouga.net, twivideo.net, twiigle.com, twicoco.com, twidou.link, erozine.jp)
+// @match        *://twihub.me/*
 // @match        *://www.twidouga.net/*
 // @match        *://twivideo.net/*
 // @match        *://twiigle.com/*
 // @match        *://twicoco.com/*
 // @match        *://www.twidou.link/*
+// @match        *://erozine.jp/twitter*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=twitter.com
 // @grant        none
 // @author       Hidegon
@@ -30,15 +31,25 @@ function get_extension(url) {
 
 // twihub.me
 if (location.origin == "https://twihub.me") {
-  var card = document.getElementsByClassName("c_detail-card")[0]
-  var video_url = document.querySelectorAll("a[href^='https://video.twimg.com/']")[0].href
-  var video_extension = get_extension(video_url)
-  var thumbnail_url = card.childNodes[0].childNodes[0].src
-  var element = `<video controls="controls" preload="none" poster="${thumbnail_url}"><source src="${video_url}" type="video/${video_extension}"></video>`
-  card.childNodes.forEach(e => { e.remove() })
-  card.insertAdjacentHTML("afterbegin", element)
-  card.style.cssText += "margin: auto!important;"
-  card.childNodes[0].style.cssText += "max-height: 80vh;"
+  if (location.href.startsWith("https://twihub.me/redirect.php")) {
+    var video_url = document.querySelector("a[href^='https://video.twimg.com/']").href
+    var video_extension = get_extension(video_url)
+    var element = `<a href="${video_url}" target="_blank"><video controls="controls" preload="metadata" style="width: 100%; max-height: 80vh;"><source src="${video_url}#t=0.1" type="video/${video_extension}"></video></a>`
+    var my_5 = document.getElementsByClassName("my-5")
+    my_5[0].remove()
+    my_5[0].insertAdjacentHTML("afterbegin", element)
+  }
+  else {
+    var card = document.getElementsByClassName("c_detail-card")[0]
+    var video_url = document.querySelectorAll("a[href^='https://video.twimg.com/']")[0].href
+    var video_extension = get_extension(video_url)
+    var thumbnail_url = card.childNodes[0].childNodes[0].src
+    var element = `<a href="${video_url}" target="_blank"><video controls="controls" preload="none" poster="${thumbnail_url}"><source src="${video_url}" type="video/${video_extension}"></video></a>`
+    card.childNodes.forEach(e => { e.remove() })
+    card.insertAdjacentHTML("afterbegin", element)
+    card.style.cssText += "margin: auto!important;"
+    card.childNodes[0].style.cssText += "max-height: 80vh;"
+  }
 } // End of twihub.me
 
 
@@ -48,7 +59,7 @@ else if (location.origin == "https://www.twidouga.net") {
     var video_url = e.href
     var video_extension = get_extension(video_url)
     var thumbnail_url = e.childNodes[0].src
-    var element = `<video controls="controls" style="width: 300px; border-radius: 15px;" preload="none" poster="${thumbnail_url}"><source src="${video_url}" type="video/${video_extension}"></video><br>`
+    var element = `<a href="${video_url}" target="_blank"><video controls="controls" style="width: 300px; border-radius: 15px;" preload="none" poster="${thumbnail_url}"><source src="${video_url}" type="video/${video_extension}"></video></a><br>`
     e.parentNode.parentNode.insertAdjacentHTML("afterend", element)
     e.parentNode.parentNode.remove()
   })
@@ -76,7 +87,7 @@ else if (location.origin == "https://twivideo.net") {
         var video_url = video.childNodes[1].href
         var video_extension = get_extension(video_url)
         var thumbnail_url = video.childNodes[1].childNodes[1].src
-        var element = `<video controls="controls" style="width: 100%; height: auto; object-fit: contain; border-radius: 3px;" preload="none" poster="${thumbnail_url}"><source src="${video_url}" type="video/${video_extension}"></video><br>`
+        var element = `<a href="${video_url}" target="_blank"><video controls="controls" style="width: 100%; height: auto; object-fit: contain; border-radius: 3px;" preload="none" poster="${thumbnail_url}"><source src="${video_url}" type="video/${video_extension}"></video></a><br>`
         video.insertAdjacentHTML("afterbegin", element)
         video.childNodes[3].remove()
       }
@@ -116,7 +127,7 @@ else if (location.origin == "https://twiigle.com") {
     var video_url = video.childNodes[1].href
     var video_extension = get_extension(video_url)
     var thumbnail_url = video.childNodes[1].childNodes[1].src
-    var element = `<video controls="controls" style="width: 100%; height: auto; object-fit: contain; border-radius: 3px;" preload="none" poster="${thumbnail_url}"><source src="${video_url}" type="video/${video_extension}"></video><br>`
+    var element = `<a href="${video_url}" target="_blank"><video controls="controls" style="width: 100%; height: auto; object-fit: contain; border-radius: 3px;" preload="none" poster="${thumbnail_url}"><source src="${video_url}" type="video/${video_extension}"></video></a><br>`
     video.insertAdjacentHTML("afterbegin", element)
     video.childNodes[3].remove()
   })
@@ -144,11 +155,28 @@ else if (location.origin == "https://twicoco.com" || location.origin == "https:/
     var video_url = card.parentNode.href
     var video_extension = get_extension(video_url)
     var thumbnail_url = card.childNodes[0].childNodes[0].src
-    var element = `<video controls="controls" style="width: 100%;" preload="none" poster="${thumbnail_url}"><source src="${video_url}" type="video/${video_extension}"></video><br>`
+    var element = `<a href="${video_url}" target="_blank"><video controls="controls" style="width: 100%;" preload="none" poster="${thumbnail_url}"><source src="${video_url}" type="video/${video_extension}"></video></a><br>`
     card.parentNode.insertAdjacentHTML("afterend", element)
     card.remove()
   })
 } // End of twicoco.com, www.twidou.link
+
+
+// erozine.jp
+else if (location.origin == "https://erozine.jp") {
+  var main = document.getElementById("main")
+  main.id = ""
+  main.style.cssText += "margin: 0 20px 0 220px;"
+  document.querySelectorAll(".tw").forEach(function(e) {
+    var video_url = e.childNodes[2].href
+    var video_extension = get_extension(video_url)
+    var thumbnail_url = e.childNodes[2].childNodes[0].src
+    var element = `<a href="${video_url}" target="_blank"><video controls="controls" style="width: 100%; max-height: 80vh;" preload="none" poster="${thumbnail_url}"><source src="${video_url}" type="video/${video_extension}"></video></a><br>`
+    e.insertAdjacentHTML("beforeend", element)
+    e.childNodes[2].remove()
+    e.style.cssText  += "width: auto; height: auto; max-width: 30vw;"
+  })
+} // End of erozine.jp
 
 
 } catch (e) { }
