@@ -1,6 +1,16 @@
-# TwiHub便利スクリプト
+# Twitter保存ランキング 便利スクリプト
 
-お好きなユーザスクリプトマネージャで実行してください。(Violentmonkeyを推奨)  
+## 対応サイト
 
-autoredirect_twihub.user.js : TwiHubのリダイレクトページで、自動リダイレクトします。  
-direct_play_twihub.user.js  : TwiHubで、動画を直接再生できるようにします。  
+[https://www.twidouga.net/ranking_t.php](https://www.twidouga.net/ranking_t.php)  
+[https://twivideo.net/?ranking](https://twivideo.net/?ranking)  
+[https://twihub.me/v2/ranking.php](https://twihub.me/v2/ranking.php)
+
+## 機能
+
+対応サイトにて、動画の直接再生を可能にします。
+
+## 使い方
+
+お好きなユーザスクリプトマネージャで実行してください。  
+Violentmonkey を推奨します。
