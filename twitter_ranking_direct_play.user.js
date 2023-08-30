@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Twitter保存ランキング 直接再生
-// @version      0.1.2
+// @version      0.1.3
 // @description  各種Twitter保存ランキングで動画を直接再生できるようにします (twihub.me, twidouga.net, twivideo.net, twiigle.com, twicoco.com, twidou.link, erozine.jp)
 // @match        *://twihub.me/*
 // @match        *://www.twidouga.net/*
@@ -38,6 +38,16 @@ if (location.origin == "https://twihub.me") {
     var my_5 = document.getElementsByClassName("my-5")
     my_5[0].remove()
     my_5[0].insertAdjacentHTML("afterbegin", element)
+  }
+  else if (location.href.startsWith("https://twihub.me/v2/favs.php")) {
+    document.querySelectorAll(".c-fav-card").forEach(function(card) {
+      var video_url = card.childNodes[0].href
+      var video_extension = get_extension(video_url)
+      var thumbnail_url = card.childNodes[0].childNodes[0].src
+      var element = `<a href="${video_url}" target="_blank"><video controls="controls" style="width: 100%;" preload="none" poster="${thumbnail_url}"><source src="${video_url}" type="video/${video_extension}"></video></a><br>`
+      card.childNodes[0].insertAdjacentHTML("afterend", element)
+      card.childNodes[0].remove()
+    })
   }
   else {
     var card = document.getElementsByClassName("c_detail-card")[0]
